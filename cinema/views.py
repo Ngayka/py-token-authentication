@@ -167,7 +167,7 @@ class OrderViewSet(viewsets.GenericViewSet,
 
     def get_permissions(self):
         if self.request.user.is_staff:
-            return [permissions.AllowAny]
+            return [permissions.AllowAny()]
         if self.action == "create":
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
@@ -175,8 +175,8 @@ class OrderViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Order.objects.all().prefetch_related()
-        return Order.objects.filter(user=self.request.user).prefetch_related()
+            return Order.objects.all().prefetch_related("tickets__movie_session__movie", "tickets__movie_session__cinema_hall")
+        return Order.objects.filter(user=self.request.user).prefetch_related("tickets__movie_session__movie", "tickets__movie_session__cinema_hall")
 
     def get_serializer_class(self):
         if self.action == "list":
